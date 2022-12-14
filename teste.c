@@ -1,8 +1,8 @@
 #include "contr.h"
 #include "so.h"
 
-//cd ../../mnt/c/Users/guerr/OneDrive/SO/Trabalho-1---SO/
-//cd ../../mnt/c/Users/Deivis\ Felipe/OneDrive/SO/Trabalho-1---SO/
+//cd ../../mnt/c/Users/guerr/OneDrive/SO/Trabalho-2---SO/
+//cd ../../mnt/c/Users/Deivis\ Felipe/OneDrive/SO/Trabalho-2---SO/
 //valgrind --track-origins=yes --log-file=filename ./teste
 int main()
 {
