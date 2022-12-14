@@ -507,8 +507,10 @@ processo_t *so_pega_processos(so_t *self) {
 
 // Função utilizada para fazer analises do tempo de execução dos programa
 void funcao_teste(so_t * self){
-  t_print(7, 1);
-  t_print(7, 2);
+  t_ins(7, 1);
+  t_ins(7, 2);
+  t_ins(0, 50);
+  t_ins(1, 60);
 }
 
 
