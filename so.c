@@ -23,6 +23,7 @@ static void init_mem(so_t *self);
 static void panico(so_t *self);
 void escalonador(so_t *self);
 static void so_termina(so_t *self);
+void funcao_teste(so_t *self);
 
 so_t *so_cria(contr_t *contr)
 {
@@ -37,6 +38,9 @@ so_t *so_cria(contr_t *contr)
   self->numero_de_processos = 1;
   self->memoria_pos = 0;
   self->memoria_pos_fim = self->memoria_utilizada;
+
+  // Chama a função teste que será usado para fazer analise do tempo de execucao
+  funcao_teste(self);
   // coloca a CPU em modo usuário
   /*
   exec_copia_estado(contr_exec(self->contr), self->cpue);
@@ -498,6 +502,13 @@ bool so_ok(so_t *self)
 // Retorna a lista de processos
 processo_t *so_pega_processos(so_t *self) {
   return self->processos;
+}
+
+
+// Função utilizada para fazer analises do tempo de execução dos programa
+void funcao_teste(so_t * self){
+  t_print(7, 1);
+  t_print(7, 2);
 }
 
 
