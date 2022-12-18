@@ -16,8 +16,12 @@ struct so_t {
   int memoria_utilizada;
   int memoria_pos;
   int memoria_pos_fim;
+
+  // Estatisticas
   int tempo_executando;
   int tempo_parado;
+  int chamadas_de_sistema;
+  int chamadas_de_sistema_relogio;
 };
 
 // funções auxiliares
@@ -43,6 +47,8 @@ so_t *so_cria(contr_t *contr)
   self->memoria_pos_fim = self->memoria_utilizada;
   self->tempo_executando = 0;
   self->tempo_parado = 0;
+  self->chamadas_de_sistema = 0;
+  self->chamadas_de_sistema_relogio = 0;
 
   // Chama a função teste que será usado para fazer analise do tempo de execucao
   funcao_teste(self);
@@ -495,11 +501,19 @@ void escalonador(so_t *self){
 // houve uma interrupção do tipo err — trate-a
 void so_int(so_t *self, err_t err)
 {
+  processo_t *execucao;
   switch (err) {
     case ERR_SISOP:
+      execucao = processos_pega_execucao(self->processos);
+      // Computada a quantidade de chamadas de sistema de processos
+      if(processos_pega_id(execucao) != 0){
+        self->chamadas_de_sistema++;
+      }
       so_trata_sisop(self);
       break;
     case ERR_TIC:
+      // Computada a quantidade de chamadas de sistema do relógio
+      self->chamadas_de_sistema_relogio++;
       so_trata_tic(self);
       break;
     default:
@@ -553,6 +567,8 @@ void exibe_informacoes_teste(so_t *self){
   t_printf("Total Execução: %d", total);
   t_printf("Tempo em execução: %d", self->tempo_executando);
   t_printf("Tempo em parado: %d", self->tempo_parado);
+  t_printf("Chamadas de sistema: %d", self->chamadas_de_sistema);
+  t_printf("Chamadas de sistema do relógio: %d", self->chamadas_de_sistema_relogio);
 }
 
 // carrega um programa na memória

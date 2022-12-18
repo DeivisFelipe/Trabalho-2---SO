@@ -1,6 +1,46 @@
-==162== Memcheck, a memory error detector
-==162== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==162== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
-==162== Command: ./teste
-==162== Parent PID: 114
-==162== 
+==176== Memcheck, a memory error detector
+==176== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==176== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==176== Command: ./teste
+==176== Parent PID: 114
+==176== 
+==176== Invalid read of size 4
+==176==    at 0x10F8D3: processos_pega_execucao (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==    by 0x10EFD8: so_contabiliza_instrucoes (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==    by 0x10D7EB: contr_laco (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==    by 0x10A68C: main (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==  Address 0x4adf0f4 is 4 bytes inside a block of size 48 free'd
+==176==    at 0x483CA3F: free (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==176==    by 0x10F9A3: processos_destroi (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==    by 0x10E0D3: so_termina (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==    by 0x10E005: so_trata_sisop_fim (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==    by 0x10EC35: so_trata_sisop (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==    by 0x10EF30: so_int (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==    by 0x10D7A9: contr_laco (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==    by 0x10A68C: main (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==  Block was alloc'd at
+==176==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==176==    by 0x10F2F4: processos_cria (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==    by 0x10DB34: so_cria (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==    by 0x10A669: main (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176== 
+==176== Invalid read of size 4
+==176==    at 0x10F914: processos_pega_id (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==    by 0x10EFEF: so_contabiliza_instrucoes (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==    by 0x10D7EB: contr_laco (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==    by 0x10A68C: main (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==  Address 0x4adf0f0 is 0 bytes inside a block of size 48 free'd
+==176==    at 0x483CA3F: free (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==176==    by 0x10F9A3: processos_destroi (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==    by 0x10E0D3: so_termina (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==    by 0x10E005: so_trata_sisop_fim (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==    by 0x10EC35: so_trata_sisop (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==    by 0x10EF30: so_int (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==    by 0x10D7A9: contr_laco (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==    by 0x10A68C: main (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==  Block was alloc'd at
+==176==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==176==    by 0x10F2F4: processos_cria (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==    by 0x10DB34: so_cria (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176==    by 0x10A669: main (in /mnt/c/Users/Deivis Felipe/OneDrive/SO/Trabalho-2---SO/teste)
+==176== 

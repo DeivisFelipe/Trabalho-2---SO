@@ -16,7 +16,7 @@ Você deve também computar algumas métricas do sistema. Considere como um mín
 
 - tempo total de execução do sistema # Feito
 - tempo total de uso da CPU (é o tempo acima menos o tempo que a CPU ficou parada) # Feito
-- número de interrupções atendidas
+- número de interrupções atendidas # Feito
 - para cada processo:
   - tempo de retorno (tempo entre criação e término)
   - tempo total bloqueado (tempo no estado B)
