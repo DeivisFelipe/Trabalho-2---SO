@@ -40,4 +40,7 @@ processo_t *so_pega_processos(so_t *self);
 // Função utilizada para printar as informações do teste
 void exibe_informacoes_teste(so_t *self);
 
+// Função utilizada para contabilizar as instruções
+void so_contabiliza_instrucoes(so_t *self);
+
 #endif // SO_H

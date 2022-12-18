@@ -115,6 +115,7 @@ void contr_laco(contr_t *self)
     }
     //t_printf("iteracao: %i laco", iteracao);
     iteracao++;
+    so_contabiliza_instrucoes(self->so);
     /*cpu_estado_t *estado = cpue_cria();
     exec_copia_estado(self->exec, estado);
     t_printf("a: %d, x: %i, Pc: %d\n", cpue_A(estado),cpue_X(estado),cpue_PC(estado));*/

@@ -16,6 +16,9 @@ struct processo_t {
     processo_t *proximo;
     int inicio_memoria;
     int fim_memoria;
+    // Estatisticas
+    int tempo_em_execucao;
+    int tempo_em_bloqueio;
 };
 
 // Função que cria o primeiro processo da lista de processos
@@ -29,6 +32,8 @@ processo_t* processos_cria(int id, estado_t estado , mem_t *mem, int inicio_memo
   self->fim_memoria = fim_memoria;
   self->terminal_bloqueio = -1;
   self->tipo_bloqueio = leitura;
+  self->tempo_em_execucao = 0;
+  self->tempo_em_bloqueio = 0;
   cpue_copia(cpu, self->cpue);
   //mem_printa(mem, inicio_memoria, fim_memoria);
   return self;
@@ -45,6 +50,8 @@ processo_t *processos_insere(processo_t *lista, int id, estado_t estado, int ini
   novo->fim_memoria = fim_memoria;
   novo->terminal_bloqueio = -1;
   novo->tipo_bloqueio = leitura;
+  novo->tempo_em_execucao = 0;
+  novo->tempo_em_bloqueio = 0;
   cpue_copia(cpu, novo->cpue);
   if(lista->proximo == NULL){
     lista->proximo = novo;
@@ -117,6 +124,16 @@ int processos_pega_terminal_bloqueio(processo_t *self){
 // Pega o tipo do bloqueio
 int processos_pega_tipo_bloqueio(processo_t *self){
   return self->tipo_bloqueio;
+}
+
+// Add 1 numérico ao tempo de execução do processo
+void processos_add_tempo_execucao(processo_t *self){
+  self->tempo_em_execucao++;
+}
+
+// Add 1 numérico ao tempo de bloqueio do processo
+void processos_add_tempo_bloqueio(processo_t *self){
+  self->tempo_em_bloqueio++;
 }
 
 // Atualiza os dados de um processo que já existe dentro da lista de processos

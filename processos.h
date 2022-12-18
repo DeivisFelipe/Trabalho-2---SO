@@ -73,6 +73,12 @@ int processos_pega_fim(processo_t *self);
 // Pega inicio memoria processo
 int processos_pega_inicio(processo_t *self);
 
+// Add 1 numérico ao tempo de execução do processo
+void processos_add_tempo_execucao(processo_t *self);
+
+// Add 1 numérico ao tempo de bloqueio do processo
+void processos_add_tempo_bloqueio(processo_t *self);
+
 // Pega o estado do processo
 estado_t processos_pega_estado(processo_t *self);
 #endif

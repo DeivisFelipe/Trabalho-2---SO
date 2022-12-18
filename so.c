@@ -16,6 +16,7 @@ struct so_t {
   int memoria_utilizada;
   int memoria_pos;
   int memoria_pos_fim;
+  int tempo_executando;
   int tempo_parado;
 };
 
@@ -40,6 +41,7 @@ so_t *so_cria(contr_t *contr)
   self->numero_de_processos = 1;
   self->memoria_pos = 0;
   self->memoria_pos_fim = self->memoria_utilizada;
+  self->tempo_executando = 0;
   self->tempo_parado = 0;
 
   // Chama a função teste que será usado para fazer analise do tempo de execucao
@@ -423,7 +425,6 @@ static void so_trata_sisop(so_t *self)
 static void so_trata_tic(so_t *self)
 {
   int relogio = rel_agora(contr_rel(self->contr));
-  t_printf("so: tic %d\n", relogio);
   if(relogio % 100 == 0){
       limpa_terminais(self);
   }
@@ -518,6 +519,20 @@ processo_t *so_pega_processos(so_t *self) {
   return self->processos;
 }
 
+void so_contabiliza_instrucoes(so_t *self){
+  processo_t *execucao = processos_pega_execucao(self->processos);
+  if(execucao != NULL){
+    if(processos_pega_id(execucao) != 0){
+      self->tempo_executando++;
+      processos_add_tempo_execucao(execucao);
+    }else{
+      self->tempo_parado++;
+    }
+  }else{
+    self->tempo_parado++;
+  }
+}
+
 
 // Função utilizada para fazer analises do tempo de execução dos programa
 void funcao_teste(so_t * self){
@@ -536,6 +551,8 @@ void limpa_terminais(so_t *self){
 void exibe_informacoes_teste(so_t *self){
   int total =  rel_agora(contr_rel(self->contr)); // +1 pois o relógio da instrução não foi atualizado ainda
   t_printf("Total Execução: %d", total);
+  t_printf("Tempo em execução: %d", self->tempo_executando);
+  t_printf("Tempo em parado: %d", self->tempo_parado);
 }
 
 // carrega um programa na memória
