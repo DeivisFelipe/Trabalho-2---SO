@@ -15,6 +15,7 @@ typedef struct contr_t contr_t;
 #include "mem.h"
 #include "so.h"
 #include "exec.h"
+#include "rel.h"
 
 contr_t *contr_cria(void);
 void contr_destroi(contr_t *self);
@@ -30,5 +31,6 @@ mem_t *contr_cria_memoria(contr_t *self, int tamanho);
 mem_t *contr_mem(contr_t *self);
 exec_t *contr_exec(contr_t *self);
 es_t *contr_es(contr_t *self);
+rel_t *contr_rel(contr_t *self);
 
 #endif // CONTR_H

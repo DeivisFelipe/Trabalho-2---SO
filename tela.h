@@ -48,4 +48,7 @@ int t_printf(char *formato, ...);
 // esta função deve ser chamada periodicamente para que tela funcione
 void t_atualiza(void);
 
+// Limpa todos os terminais de saida
+void t_limpa_terms();
+
 #endif // _TELA_H_

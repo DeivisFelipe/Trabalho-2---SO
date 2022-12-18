@@ -90,6 +90,11 @@ es_t *contr_es(contr_t *self)
   return self->es;
 }
 
+rel_t *contr_rel(contr_t *self)
+{  
+  return self->rel;
+}
+
 void contr_laco(contr_t *self)
 {
   // executa uma instrução por vez até SO dizer que chega
@@ -115,8 +120,8 @@ void contr_laco(contr_t *self)
     t_printf("a: %d, x: %i, Pc: %d\n", cpue_A(estado),cpue_X(estado),cpue_PC(estado));*/
   } while (so_ok(self->so));
       
-  t_printf("Fim da execução.");
-  t_printf("relógio: %d\n", rel_agora(self->rel)); 
+  //t_printf("Fim da execução.");
+  //t_printf("relógio: %d\n", rel_agora(self->rel)); 
 }
  
 

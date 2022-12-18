@@ -14,7 +14,7 @@ O outro escalonador é _processo mais curto_, no qual é escolhido o processo qu
 
 Você deve também computar algumas métricas do sistema. Considere como um mínimo:
 
-- tempo total de execução do sistema
+- tempo total de execução do sistema # Feito
 - tempo total de uso da CPU (é o tempo acima menos o tempo que a CPU ficou parada)
 - número de interrupções atendidas
 - para cada processo:

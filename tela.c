@@ -127,6 +127,16 @@ void t_ins(int t, int n)
   fn_ins(&tela.entrada[t], n);
 }
 
+// Limpa todos os terminais de saida
+void t_limpa_terms()
+{
+  for (int t=0; t<N_TERM; t++) {
+    if(!t_livre(t)) {
+      fn_zera(&tela.saida[t]);
+    }
+  }
+}
+
 static void insere_string_na_console(char *s)
 {
   for(int l=0; l<N_LIN_CONS -1; l++) {

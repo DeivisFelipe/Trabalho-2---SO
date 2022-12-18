@@ -16,6 +16,7 @@ struct so_t {
   int memoria_utilizada;
   int memoria_pos;
   int memoria_pos_fim;
+  int tempo_parado;
 };
 
 // funções auxiliares
@@ -24,6 +25,7 @@ static void panico(so_t *self);
 void escalonador(so_t *self);
 static void so_termina(so_t *self);
 void funcao_teste(so_t *self);
+void limpa_terminais(so_t *self);
 
 so_t *so_cria(contr_t *contr)
 {
@@ -38,6 +40,7 @@ so_t *so_cria(contr_t *contr)
   self->numero_de_processos = 1;
   self->memoria_pos = 0;
   self->memoria_pos_fim = self->memoria_utilizada;
+  self->tempo_parado = 0;
 
   // Chama a função teste que será usado para fazer analise do tempo de execucao
   funcao_teste(self);
@@ -172,6 +175,11 @@ static void so_trata_sisop_fim(so_t *self)
   self->numero_de_processos--;
   if(self->numero_de_processos == 0){
     panico(self);
+  }
+
+  // Finaliza o programa para o teste de tempo de execução
+  if(self->numero_de_processos == 1){
+    t_ins(7, 0);
   }
   escalonador(self);
 }
@@ -414,6 +422,12 @@ static void so_trata_sisop(so_t *self)
 // trata uma interrupção de tempo do relógio
 static void so_trata_tic(so_t *self)
 {
+  int relogio = rel_agora(contr_rel(self->contr));
+  t_printf("so: tic %d\n", relogio);
+  if(relogio % 100 == 0){
+      limpa_terminais(self);
+  }
+
   // Desbloqueia os processos disponiveis primeiro
   processos_desbloqueia(self->processos, contr_es(self->contr));
   processo_t *execucao = processos_pega_execucao(self->processos);
@@ -513,7 +527,16 @@ void funcao_teste(so_t * self){
   t_ins(1, 60);
 }
 
+// Função utilizada para limpar os terminais
+void limpa_terminais(so_t *self){
+  t_limpa_terms();
+}
 
+// Função utilizada para printar as informações do teste
+void exibe_informacoes_teste(so_t *self){
+  int total =  rel_agora(contr_rel(self->contr)); // +1 pois o relógio da instrução não foi atualizado ainda
+  t_printf("Total Execução: %d", total);
+}
 
 // carrega um programa na memória
 static void init_mem(so_t *self)
