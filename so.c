@@ -7,6 +7,15 @@
 #include <ctype.h>
 #include <unistd.h>
 
+struct historico_t{
+  int id;
+  int tempo_em_execucao;
+  int tempo_em_bloqueio;
+  int numero_bloqueios;
+  int numero_desbloqueios;
+  historico_t *proximo;
+};
+
 struct so_t {
   contr_t *contr;       // o controlador do hardware
   bool paniquei;        // apareceu alguma situação intratável
@@ -22,6 +31,10 @@ struct so_t {
   int tempo_parado;
   int chamadas_de_sistema;
   int chamadas_de_sistema_relogio;
+
+  // historico
+  historico_t *historico;
+  int tamanho_historico;
 };
 
 // funções auxiliares
@@ -49,6 +62,10 @@ so_t *so_cria(contr_t *contr)
   self->tempo_parado = 0;
   self->chamadas_de_sistema = 0;
   self->chamadas_de_sistema_relogio = 0;
+
+  // historico
+  self->historico = NULL;
+  self->tamanho_historico = 0;
 
   // Chama a função teste que será usado para fazer analise do tempo de execucao
   funcao_teste(self);
@@ -179,6 +196,25 @@ static void so_trata_sisop_fim(so_t *self)
   processo_t *atual = processos_pega_execucao(self->processos);
   int id = processos_pega_id(atual);
   t_printf("Processo %i finalizado", id);
+
+  // salva no historico
+  historico_t *item_historico = malloc(sizeof(*item_historico));
+  item_historico->numero_bloqueios = processos_pega_numero_bloqueios(atual);
+  item_historico->numero_desbloqueios = processos_pega_numero_desbloqueios(atual);
+  item_historico->tempo_em_execucao = processos_pega_tempo_em_execucao(atual);
+  item_historico->tempo_em_bloqueio = processos_pega_tempo_em_bloqueio(atual);
+  item_historico->id = id;
+
+  if(self->historico == NULL){
+    self->historico = item_historico;
+  }else{
+    historico_t *temp = self->historico;
+    while(temp->proximo != NULL){
+      temp = temp->proximo;
+    }
+    temp->proximo = item_historico;
+  }
+
   processos_remove(self->processos, atual);
   self->numero_de_processos--;
   if(self->numero_de_processos == 0){
@@ -552,8 +588,8 @@ void so_contabiliza_instrucoes(so_t *self){
 void funcao_teste(so_t * self){
   t_ins(7, 1);
   t_ins(7, 2);
-  t_ins(0, 50);
-  t_ins(1, 60);
+  t_ins(0, 2);
+  t_ins(1, 1);
 }
 
 // Função utilizada para limpar os terminais
@@ -569,6 +605,15 @@ void exibe_informacoes_teste(so_t *self){
   t_printf("Tempo em parado: %d", self->tempo_parado);
   t_printf("Chamadas de sistema: %d", self->chamadas_de_sistema);
   t_printf("Chamadas de sistema do relógio: %d", self->chamadas_de_sistema_relogio);
+  historico_t *temp = self->historico;
+  while(temp != NULL){
+    t_printf("Processo %d", temp->id);
+    t_printf("Tempo em execução: %d", temp->tempo_em_execucao);
+    t_printf("Tempo em bloqueio: %d", temp->tempo_em_bloqueio);
+    t_printf("Total de bloqueios: %d", temp->numero_bloqueios);
+    t_printf("Total de desbloqueios: %d", temp->numero_desbloqueios);
+    temp = temp->proximo;
+  }
 }
 
 // carrega um programa na memória

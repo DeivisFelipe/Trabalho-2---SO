@@ -13,6 +13,7 @@ typedef enum {
 } estado_t;
 
 typedef struct processo_t processo_t;
+typedef struct historico_t historico_t;
 
 processo_t* processos_cria(int id, estado_t estado , mem_t *mem, int inicio_memoria, int fim_memoria, cpu_estado_t *cpu);
 
@@ -78,6 +79,18 @@ void processos_add_tempo_execucao(processo_t *self);
 
 // Add 1 numérico ao tempo de bloqueio do processo
 void processos_add_tempo_bloqueio(processo_t *self);
+
+// Pega o numero de bloqueios do processo
+int processos_pega_numero_bloqueios(processo_t *self);
+
+// Pega o numero de desbloqueios do processo
+int processos_pega_numero_desbloqueios(processo_t *self);
+
+// Pega o tempo de execucão do processo
+int processos_pega_tempo_em_execucao(processo_t *self);
+
+// Pega o tempo de execucão de bloqueio do processo
+int processos_pega_tempo_em_bloqueio(processo_t *self);
 
 // Pega o estado do processo
 estado_t processos_pega_estado(processo_t *self);

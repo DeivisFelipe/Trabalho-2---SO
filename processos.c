@@ -19,6 +19,8 @@ struct processo_t {
     // Estatisticas
     int tempo_em_execucao;
     int tempo_em_bloqueio;
+    int numero_bloqueios;
+    int numero_desbloqueios;
 };
 
 // Função que cria o primeiro processo da lista de processos
@@ -34,6 +36,9 @@ processo_t* processos_cria(int id, estado_t estado , mem_t *mem, int inicio_memo
   self->tipo_bloqueio = leitura;
   self->tempo_em_execucao = 0;
   self->tempo_em_bloqueio = 0;
+  self->numero_bloqueios = 0;
+  self->numero_desbloqueios = 0;
+
   cpue_copia(cpu, self->cpue);
   //mem_printa(mem, inicio_memoria, fim_memoria);
   return self;
@@ -52,6 +57,9 @@ processo_t *processos_insere(processo_t *lista, int id, estado_t estado, int ini
   novo->tipo_bloqueio = leitura;
   novo->tempo_em_execucao = 0;
   novo->tempo_em_bloqueio = 0;
+  novo->numero_bloqueios = 0;
+  novo->numero_desbloqueios = 0;
+
   cpue_copia(cpu, novo->cpue);
   if(lista->proximo == NULL){
     lista->proximo = novo;
@@ -156,6 +164,27 @@ void processos_atualiza_estado(processo_t *lista, int id, estado_t estado, acess
       temp->terminal_bloqueio = terminal_bloqueio; 
     }
   }  
+}
+
+
+// Pega o numero de bloqueios do processo
+int processos_pega_numero_bloqueios(processo_t *self){
+  return self->numero_bloqueios;
+}
+
+// Pega o numero de desbloqueios do processo
+int processos_pega_numero_desbloqueios(processo_t *self){
+  return self->numero_desbloqueios;
+}
+
+// Pega o tempo de execucão do processo
+int processos_pega_tempo_em_execucao(processo_t *self){
+  return self->tempo_em_execucao;
+}
+
+// Pega o tempo de execucão de bloqueio do processo
+int processos_pega_tempo_em_bloqueio(processo_t *self){
+  return self->tempo_em_bloqueio;
 }
 
 // Atualiza o estado de um processo, se for para BLOQUEADO armazena o tipo de bloqueio e o terminal referência
