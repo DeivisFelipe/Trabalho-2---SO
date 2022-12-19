@@ -19,9 +19,9 @@ Você deve também computar algumas métricas do sistema. Considere como um mín
 - número de interrupções atendidas # Feito
 - para cada processo:
   - tempo de retorno (tempo entre criação e término) # Feito
-  - tempo total bloqueado (tempo no estado B)
+  - tempo total bloqueado (tempo no estado B) # Feito
   - tempo total de CPU (tempo no estado E) # Feito
-  - tempo total de espera (tempo no estado P)
+  - tempo total de espera (tempo no estado P) # Feito
   - tempo médio de retorno (média do tempo entre sair do estado B e entrar no E)
   - número de bloqueios # Feito
   - número de preempções

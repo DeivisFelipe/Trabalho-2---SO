@@ -10,7 +10,6 @@ int main()
   so_t *so = so_cria(contr);
   contr_informa_so(contr, so);
   contr_laco(contr);
-  exibe_informacoes_teste(so);
   contr_destroi(contr);
   return 0;
 }

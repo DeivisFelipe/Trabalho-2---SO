@@ -65,6 +65,7 @@ void contr_destroi(contr_t *self) {
   es_destroi(self->es);
   term_destroi(self->term);
   rel_destroi(self->rel);
+  so_destroi(self->so);
   t_fim();
   mem_destroi(self->mem);
   free(self);

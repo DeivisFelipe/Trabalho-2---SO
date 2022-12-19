@@ -19,6 +19,7 @@ struct processo_t {
     // Estatisticas
     int tempo_em_execucao;
     int tempo_em_bloqueio;
+    int tempo_em_pronto;
     int numero_bloqueios;
     int numero_desbloqueios;
     int tempo_inicio;
@@ -37,6 +38,7 @@ processo_t* processos_cria(int id, estado_t estado , mem_t *mem, int inicio_memo
   self->tipo_bloqueio = leitura;
   self->tempo_em_execucao = 0;
   self->tempo_em_bloqueio = 0;
+  self->tempo_em_pronto = 0;
   self->numero_bloqueios = 0;
   self->numero_desbloqueios = 0;
   self->tempo_inicio = tempo_inicio;
@@ -59,6 +61,7 @@ processo_t *processos_insere(processo_t *lista, int id, estado_t estado, int ini
   novo->tipo_bloqueio = leitura;
   novo->tempo_em_execucao = 0;
   novo->tempo_em_bloqueio = 0;
+  novo->tempo_em_pronto = 0;
   novo->numero_bloqueios = 0;
   novo->numero_desbloqueios = 0;
   novo->tempo_inicio = tempo_inicio;
@@ -89,7 +92,8 @@ void processos_printa(processo_t *lista){
 void processos_remove(processo_t *lista, processo_t *atual){
   processo_t *temp = lista;
   if(temp->proximo == NULL){
-    free(lista);
+    free(temp->cpue);
+    free(temp);
     return;
   }
   while (temp->proximo != NULL && temp->proximo != atual) {
@@ -143,14 +147,27 @@ int processos_pega_tipo_bloqueio(processo_t *self){
   return self->tipo_bloqueio;
 }
 
+// Contabiliza o tempo em bloqueado e pronto
+void processos_contabiliza_estatisticas(processo_t *lista){
+  processo_t *temp = lista;
+  while(temp != NULL){
+    if(temp->estado == BLOQUEADO){
+      temp->tempo_em_bloqueio++;
+    }else if(temp->estado == PRONTO){
+      temp->tempo_em_pronto++;
+    }
+    temp = temp->proximo;
+  }
+}
+
 // Add 1 numérico ao tempo de execução do processo
 void processos_add_tempo_execucao(processo_t *self){
-  self->tempo_em_execucao++;
+  self->tempo_em_execucao = self->tempo_em_execucao + 1;
 }
 
 // Add 1 numérico ao tempo de bloqueio do processo
 void processos_add_tempo_bloqueio(processo_t *self){
-  self->tempo_em_bloqueio++;
+  self->tempo_em_bloqueio = self->tempo_em_bloqueio + 1;
 }
 
 // Atualiza os dados de um processo que já existe dentro da lista de processos
@@ -205,6 +222,11 @@ int processos_pega_tempo_em_execucao(processo_t *self){
 // Pega o tempo de execucão de bloqueio do processo
 int processos_pega_tempo_em_bloqueio(processo_t *self){
   return self->tempo_em_bloqueio;
+}
+
+// Pega o tempo de execucão em pronto do processo
+int processos_pega_tempo_em_pronto(processo_t *self){
+  return self->tempo_em_pronto;
 }
 
 // Pega o tempo de retorno do processo
@@ -305,13 +327,13 @@ int processos_pega_inicio(processo_t *self){
 // Destroi todos os processos
 void processos_destroi(processo_t *lista){
   processo_t *temp = lista;
-  while (temp == NULL)
+  while (temp != NULL)
   {
     processo_t *aux = temp->proximo;
+    free(temp->cpue);
     free(temp);
     temp = aux;
   }
-  free(lista);
   return;
 }
 

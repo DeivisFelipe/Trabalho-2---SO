@@ -44,6 +44,9 @@ void processos_atualiza_dados(processo_t *lista, int id, estado_t estado, cpu_es
 // Atualiza os dados de um processo que já existe dentro da lista de processos
 void processos_atualiza_dados_processo(processo_t *selt, estado_t estado, cpu_estado_t *cpu);
 
+// Contabiliza o tempo em bloqueado e pronto
+void processos_contabiliza_estatisticas(processo_t *lista);
+
 // Pega o tempo de retorno do processo
 int processos_pega_tempo_de_retorno(processo_t *self, int tempo_final);
 
@@ -94,6 +97,9 @@ int processos_pega_tempo_em_execucao(processo_t *self);
 
 // Pega o tempo de execucão de bloqueio do processo
 int processos_pega_tempo_em_bloqueio(processo_t *self);
+
+// Pega o tempo de execucão em pronto do processo
+int processos_pega_tempo_em_pronto(processo_t *self);
 
 // Pega o estado do processo
 estado_t processos_pega_estado(processo_t *self);

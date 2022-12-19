@@ -11,6 +11,7 @@ struct historico_t{
   int id;
   int tempo_em_execucao;
   int tempo_em_bloqueio;
+  int tempo_em_pronto;
   int numero_bloqueios;
   int numero_desbloqueios;
   int tempo_de_retorno;
@@ -199,19 +200,20 @@ static void so_trata_sisop_fim(so_t *self)
   t_printf("Processo %i finalizado", id);
 
   // salva no historico
-  historico_t *item_historico = malloc(sizeof(*item_historico));
+  historico_t *item_historico = malloc(sizeof(historico_t));
   item_historico->numero_bloqueios = processos_pega_numero_bloqueios(atual);
   item_historico->numero_desbloqueios = processos_pega_numero_desbloqueios(atual);
-  t_printf("teste %d", processos_pega_numero_desbloqueios(atual));
   item_historico->tempo_em_execucao = processos_pega_tempo_em_execucao(atual);
   item_historico->tempo_em_bloqueio = processos_pega_tempo_em_bloqueio(atual);
+  item_historico->tempo_em_pronto = processos_pega_tempo_em_pronto(atual);
   item_historico->tempo_de_retorno = processos_pega_tempo_de_retorno(atual, rel_agora(contr_rel(self->contr)));
+  item_historico->proximo = NULL;
   item_historico->id = id;
 
+  historico_t *temp = self->historico;
   if(self->historico == NULL){
     self->historico = item_historico;
   }else{
-    historico_t *temp = self->historico;
     while(temp->proximo != NULL){
       temp = temp->proximo;
     }
@@ -220,12 +222,10 @@ static void so_trata_sisop_fim(so_t *self)
 
   processos_remove(self->processos, atual);
   self->numero_de_processos--;
-  if(self->numero_de_processos == 0){
-    panico(self);
-  }
 
   // Finaliza o programa para o teste de tempo de execução
   if(self->numero_de_processos == 1){
+    t_printf("Finalizando SO");
     t_ins(7, 0);
   }
   escalonador(self);
@@ -237,7 +237,19 @@ static void so_termina(so_t *self)
   // bota o so em paniquei
   self->paniquei = true;
   // elimita todos procresso do sistema
-  processos_destroi(self->processos);  
+  processos_destroi(self->processos);
+  self->processos = NULL;
+
+  exibe_informacoes_teste(self);
+
+  // destroi historico
+  historico_t *historico = self->historico;
+  while (historico != NULL)
+  {
+    historico_t *aux = historico->proximo;
+    free(historico);
+    historico = aux;
+  }
 }
 
 // Divide a string pelo delimitador, retornando um array de strings
@@ -573,6 +585,7 @@ processo_t *so_pega_processos(so_t *self) {
 }
 
 void so_contabiliza_instrucoes(so_t *self){
+  processos_contabiliza_estatisticas(self->processos);
   processo_t *execucao = processos_pega_execucao(self->processos);
   if(execucao != NULL){
     if(processos_pega_id(execucao) != 0){
@@ -592,7 +605,7 @@ void funcao_teste(so_t * self){
   t_ins(7, 1);
   t_ins(7, 2);
   t_ins(0, 50);
-  t_ins(1, 60);
+  t_ins(1, 40);
 }
 
 // Função utilizada para limpar os terminais
@@ -603,19 +616,24 @@ void limpa_terminais(so_t *self){
 // Função utilizada para printar as informações do teste
 void exibe_informacoes_teste(so_t *self){
   int total =  rel_agora(contr_rel(self->contr)); // +1 pois o relógio da instrução não foi atualizado ainda
-  t_printf("Total Execução: %d", total);
-  t_printf("Tempo em execução: %d", self->tempo_executando);
-  t_printf("Tempo em parado: %d", self->tempo_parado);
-  t_printf("Chamadas de sistema: %d", self->chamadas_de_sistema);
-  t_printf("Chamadas de sistema do relógio: %d", self->chamadas_de_sistema_relogio);
+  t_printf("-------------------------------\n");
+  t_printf("Informações SO\n");
+  t_printf("Total Execução: %d\n", total);
+  t_printf("Tempo em execução: %d\n", self->tempo_executando);
+  t_printf("Tempo em parado: %d\n", self->tempo_parado);
+  t_printf("Chamadas de sistema: %d\n", self->chamadas_de_sistema);
+  t_printf("Chamadas rel: %d\n", self->chamadas_de_sistema_relogio);
+  t_printf("-------------------------------\n");
   historico_t *temp = self->historico;
   while(temp != NULL){
     t_printf("Processo %d", temp->id);
-    t_printf("Tempo de retorno: %d", temp->tempo_de_retorno);
-    t_printf("Tempo em execução: %d", temp->tempo_em_execucao);
-    t_printf("Tempo em bloqueio: %d", temp->tempo_em_bloqueio);
-    t_printf("Total de bloqueios: %d", temp->numero_bloqueios);
-    t_printf("Total de desbloqueios: %d", temp->numero_desbloqueios);
+    t_printf("Tempo de retorno: %d\n", temp->tempo_de_retorno);
+    t_printf("Tempo em execução: %4d\n", temp->tempo_em_execucao);
+    t_printf("Tempo em bloqueio: %d\n", temp->tempo_em_bloqueio);
+    t_printf("Tempo em pronto: %d\n", temp->tempo_em_pronto);
+    t_printf("Total de bloqueios: %d\n", temp->numero_bloqueios);
+    t_printf("Total de desbloqueios: %d\n", temp->numero_desbloqueios);
+    t_printf("-------------------------------\n");
     temp = temp->proximo;
   }
 }
