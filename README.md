@@ -18,12 +18,12 @@ Você deve também computar algumas métricas do sistema. Considere como um mín
 - tempo total de uso da CPU (é o tempo acima menos o tempo que a CPU ficou parada) # Feito
 - número de interrupções atendidas # Feito
 - para cada processo:
-  - tempo de retorno (tempo entre criação e término)
+  - tempo de retorno (tempo entre criação e término) # Feito
   - tempo total bloqueado (tempo no estado B)
-  - tempo total de CPU (tempo no estado E)
+  - tempo total de CPU (tempo no estado E) # Feito
   - tempo total de espera (tempo no estado P)
   - tempo médio de retorno (média do tempo entre sair do estado B e entrar no E)
-  - número de bloqueios
+  - número de bloqueios # Feito
   - número de preempções
 
 Você deve executar o sistema em 4 configurações diferentes (cada escalonador, com quantum grande e pequeno), para dois conjuntos de programas (que serão fornecidos), e coletar as métricas.

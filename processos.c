@@ -21,10 +21,11 @@ struct processo_t {
     int tempo_em_bloqueio;
     int numero_bloqueios;
     int numero_desbloqueios;
+    int tempo_inicio;
 };
 
 // Função que cria o primeiro processo da lista de processos
-processo_t* processos_cria(int id, estado_t estado , mem_t *mem, int inicio_memoria, int fim_memoria, cpu_estado_t *cpu){
+processo_t* processos_cria(int id, estado_t estado , mem_t *mem, int inicio_memoria, int fim_memoria, cpu_estado_t *cpu, int tempo_inicio){
   processo_t *self = malloc(sizeof(*self));
   self->id = id;
   self->estado = estado;
@@ -38,6 +39,7 @@ processo_t* processos_cria(int id, estado_t estado , mem_t *mem, int inicio_memo
   self->tempo_em_bloqueio = 0;
   self->numero_bloqueios = 0;
   self->numero_desbloqueios = 0;
+  self->tempo_inicio = tempo_inicio;
 
   cpue_copia(cpu, self->cpue);
   //mem_printa(mem, inicio_memoria, fim_memoria);
@@ -45,7 +47,7 @@ processo_t* processos_cria(int id, estado_t estado , mem_t *mem, int inicio_memo
 }
 
 // Função que insere um novo processo a lista de processos
-processo_t *processos_insere(processo_t *lista, int id, estado_t estado, int inicio_memoria, int fim_memoria, cpu_estado_t *cpu){
+processo_t *processos_insere(processo_t *lista, int id, estado_t estado, int inicio_memoria, int fim_memoria, cpu_estado_t *cpu, int tempo_inicio){
   processo_t *novo = malloc(sizeof(*novo));
   novo->id = id;
   novo->estado = estado;
@@ -59,6 +61,7 @@ processo_t *processos_insere(processo_t *lista, int id, estado_t estado, int ini
   novo->tempo_em_bloqueio = 0;
   novo->numero_bloqueios = 0;
   novo->numero_desbloqueios = 0;
+  novo->tempo_inicio = tempo_inicio;
 
   cpue_copia(cpu, novo->cpue);
   if(lista->proximo == NULL){
@@ -105,6 +108,11 @@ void processos_atualiza_dados(processo_t *lista, int id, estado_t estado, cpu_es
     temp = temp->proximo;
   }
   if(temp != NULL){
+    // Atualiza o numero de bloqueios
+    if(estado == BLOQUEADO && (temp->estado == PRONTO || temp->estado == EXECUCAO)){
+      temp->numero_bloqueios++;
+    }
+
     temp->estado = estado;
     cpue_copia(cpu, temp->cpue);
   }  
@@ -116,6 +124,7 @@ void processos_desbloqueia(processo_t *lista, es_t *estrada_saida){
   while(temp != NULL){
     if(temp->estado == BLOQUEADO){
       if(es_pronto(estrada_saida, temp->terminal_bloqueio, temp->tipo_bloqueio)){
+        temp->numero_desbloqueios++;
         temp->estado = PRONTO;
       }
     }
@@ -146,6 +155,11 @@ void processos_add_tempo_bloqueio(processo_t *self){
 
 // Atualiza os dados de um processo que já existe dentro da lista de processos
 void processos_atualiza_dados_processo(processo_t *self, estado_t estado, cpu_estado_t *cpu){
+  // Atualiza o numero de bloqueios e desbloqueios
+  if(estado == BLOQUEADO && (self->estado == PRONTO || self->estado == EXECUCAO)){
+    self->numero_bloqueios++;
+  }
+  
   self->estado = estado;
   cpue_copia(cpu, self->cpue);
 }
@@ -158,6 +172,12 @@ void processos_atualiza_estado(processo_t *lista, int id, estado_t estado, acess
     temp = temp->proximo;
   }
   if(temp != NULL){
+    // Atualiza o numero de bloqueios
+    if(estado == BLOQUEADO && (temp->estado == PRONTO || temp->estado == EXECUCAO)){
+      temp->numero_bloqueios++;
+    }
+
+    // Atualiza o estado do processo 
     temp->estado = estado;
     if(estado == BLOQUEADO){
       temp->tipo_bloqueio = tipo_bloqueio; 
@@ -187,13 +207,21 @@ int processos_pega_tempo_em_bloqueio(processo_t *self){
   return self->tempo_em_bloqueio;
 }
 
+// Pega o tempo de retorno do processo
+int processos_pega_tempo_de_retorno(processo_t *self, int tempo_final){
+  return tempo_final - self->tempo_inicio;
+}
+
 // Atualiza o estado de um processo, se for para BLOQUEADO armazena o tipo de bloqueio e o terminal referência
-void processos_atualiza_estado_processo(processo_t *lista, estado_t estado, acesso_t tipo_bloqueio, int terminal_bloqueio){
-  processo_t *temp = lista;
-  temp->estado = estado; 
+void processos_atualiza_estado_processo(processo_t *self, estado_t estado, acesso_t tipo_bloqueio, int terminal_bloqueio){
+  // Atualiza o numero de bloqueios
+  if(estado == BLOQUEADO && (self->estado == PRONTO || self->estado == EXECUCAO)){
+    self->numero_bloqueios++;
+  }
+  self->estado = estado; 
   if(estado == BLOQUEADO){
-    temp->tipo_bloqueio = tipo_bloqueio; 
-    temp->terminal_bloqueio = terminal_bloqueio; 
+    self->tipo_bloqueio = tipo_bloqueio; 
+    self->terminal_bloqueio = terminal_bloqueio; 
   }
 }
 

@@ -13,6 +13,7 @@ struct historico_t{
   int tempo_em_bloqueio;
   int numero_bloqueios;
   int numero_desbloqueios;
+  int tempo_de_retorno;
   historico_t *proximo;
 };
 
@@ -54,7 +55,7 @@ so_t *so_cria(contr_t *contr)
   self->cpue = cpue_cria();
   self->memoria_utilizada = 0;
   init_mem(self); // Executa antes para saber qual o tamanho do programa principal
-  self->processos = processos_cria(0, EXECUCAO, contr_mem(self->contr), 0, self->memoria_utilizada, self->cpue);
+  self->processos = processos_cria(0, EXECUCAO, contr_mem(self->contr), 0, self->memoria_utilizada, self->cpue, rel_agora(contr_rel(self->contr)));
   self->numero_de_processos = 1;
   self->memoria_pos = 0;
   self->memoria_pos_fim = self->memoria_utilizada;
@@ -201,8 +202,10 @@ static void so_trata_sisop_fim(so_t *self)
   historico_t *item_historico = malloc(sizeof(*item_historico));
   item_historico->numero_bloqueios = processos_pega_numero_bloqueios(atual);
   item_historico->numero_desbloqueios = processos_pega_numero_desbloqueios(atual);
+  t_printf("teste %d", processos_pega_numero_desbloqueios(atual));
   item_historico->tempo_em_execucao = processos_pega_tempo_em_execucao(atual);
   item_historico->tempo_em_bloqueio = processos_pega_tempo_em_bloqueio(atual);
+  item_historico->tempo_de_retorno = processos_pega_tempo_de_retorno(atual, rel_agora(contr_rel(self->contr)));
   item_historico->id = id;
 
   if(self->historico == NULL){
@@ -394,7 +397,7 @@ static void so_trata_sisop_cria(so_t *self) {
     mem_muda_fim_executando(mem, self->memoria_pos_fim);
 
     //mem_printa(mem);
-    self->processos = processos_insere(self->processos, numeroPrograma, EXECUCAO, self->memoria_utilizada, fim, self->cpue);
+    self->processos = processos_insere(self->processos, numeroPrograma, EXECUCAO, self->memoria_utilizada, fim, self->cpue, rel_agora(contr_rel(self->contr)));
     
     self->memoria_utilizada += tamanhoMemoria;
     mem_muda_utilizado(mem, self->memoria_utilizada);
@@ -588,8 +591,8 @@ void so_contabiliza_instrucoes(so_t *self){
 void funcao_teste(so_t * self){
   t_ins(7, 1);
   t_ins(7, 2);
-  t_ins(0, 2);
-  t_ins(1, 1);
+  t_ins(0, 50);
+  t_ins(1, 60);
 }
 
 // Função utilizada para limpar os terminais
@@ -608,6 +611,7 @@ void exibe_informacoes_teste(so_t *self){
   historico_t *temp = self->historico;
   while(temp != NULL){
     t_printf("Processo %d", temp->id);
+    t_printf("Tempo de retorno: %d", temp->tempo_de_retorno);
     t_printf("Tempo em execução: %d", temp->tempo_em_execucao);
     t_printf("Tempo em bloqueio: %d", temp->tempo_em_bloqueio);
     t_printf("Total de bloqueios: %d", temp->numero_bloqueios);
