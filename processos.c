@@ -23,6 +23,7 @@ struct processo_t {
     int numero_bloqueios;
     int numero_desbloqueios;
     int tempo_inicio;
+    float media_tempo_retorno;
 };
 
 // Função que cria o primeiro processo da lista de processos
@@ -41,6 +42,7 @@ processo_t* processos_cria(int id, estado_t estado , mem_t *mem, int inicio_memo
   self->tempo_em_pronto = 0;
   self->numero_bloqueios = 0;
   self->numero_desbloqueios = 0;
+  self->media_tempo_retorno = 0;
   self->tempo_inicio = tempo_inicio;
 
   cpue_copia(cpu, self->cpue);
@@ -64,6 +66,7 @@ processo_t *processos_insere(processo_t *lista, int id, estado_t estado, int ini
   novo->tempo_em_pronto = 0;
   novo->numero_bloqueios = 0;
   novo->numero_desbloqueios = 0;
+  novo->media_tempo_retorno = 0;
   novo->tempo_inicio = tempo_inicio;
 
   cpue_copia(cpu, novo->cpue);
@@ -232,6 +235,11 @@ int processos_pega_tempo_em_pronto(processo_t *self){
 // Pega o tempo de retorno do processo
 int processos_pega_tempo_de_retorno(processo_t *self, int tempo_final){
   return tempo_final - self->tempo_inicio;
+}
+
+// Pega a media de tempo de retorno do processo
+float processos_pega_media_tempo_de_retorno(processo_t *self){
+  return self->media_tempo_retorno;
 }
 
 // Atualiza o estado de um processo, se for para BLOQUEADO armazena o tipo de bloqueio e o terminal referência

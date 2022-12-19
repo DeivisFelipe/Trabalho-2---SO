@@ -101,6 +101,9 @@ int processos_pega_tempo_em_bloqueio(processo_t *self);
 // Pega o tempo de execucão em pronto do processo
 int processos_pega_tempo_em_pronto(processo_t *self);
 
+// Pega a media de tempo de retorno do processo
+float processos_pega_media_tempo_de_retorno(processo_t *self);
+
 // Pega o estado do processo
 estado_t processos_pega_estado(processo_t *self);
 #endif
