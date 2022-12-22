@@ -24,6 +24,6 @@ Você deve também computar algumas métricas do sistema. Considere como um mín
   - tempo total de espera (tempo no estado P) # Feito
   - tempo médio de retorno (média do tempo entre sair do estado B e entrar no E) # Feito
   - número de bloqueios # Feito
-  - número de preempções
+  - número de preempções # Feito
 
 Você deve executar o sistema em 4 configurações diferentes (cada escalonador, com quantum grande e pequeno), para dois conjuntos de programas (que serão fornecidos), e coletar as métricas.

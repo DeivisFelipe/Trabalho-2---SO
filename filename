@@ -1,6 +1,6 @@
-==186== Memcheck, a memory error detector
-==186== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==186== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
-==186== Command: ./teste
-==186== Parent PID: 17
-==186== 
+==200== Memcheck, a memory error detector
+==200== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==200== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==200== Command: ./teste
+==200== Parent PID: 17
+==200== 

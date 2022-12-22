@@ -23,6 +23,9 @@ struct processo_t {
     int numero_bloqueios;
     int numero_desbloqueios;
     int tempo_inicio;
+    int numero_preempcoes;
+    // Quantum
+    int quantum;
 };
 
 // Função que cria o primeiro processo da lista de processos
@@ -42,6 +45,8 @@ processo_t* processos_cria(int id, estado_t estado , mem_t *mem, int inicio_memo
   self->numero_bloqueios = 0;
   self->numero_desbloqueios = 0;
   self->tempo_inicio = tempo_inicio;
+  self->numero_preempcoes = 0;
+  self->quantum = 0;
 
   cpue_copia(cpu, self->cpue);
   //mem_printa(mem, inicio_memoria, fim_memoria);
@@ -65,6 +70,8 @@ processo_t *processos_insere(processo_t *lista, int id, estado_t estado, int ini
   novo->numero_bloqueios = 0;
   novo->numero_desbloqueios = 0;
   novo->tempo_inicio = tempo_inicio;
+  novo->numero_preempcoes = 0;
+  novo->quantum = 0;
 
   cpue_copia(cpu, novo->cpue);
   if(lista->proximo == NULL){
@@ -115,6 +122,8 @@ void processos_atualiza_dados(processo_t *lista, int id, estado_t estado, cpu_es
     // Atualiza o numero de bloqueios
     if(estado == BLOQUEADO && (temp->estado == PRONTO || temp->estado == EXECUCAO)){
       temp->numero_bloqueios++;
+    }else if(estado == PRONTO && temp->estado == EXECUCAO){
+      temp->numero_preempcoes++;
     }
 
     temp->estado = estado;
@@ -175,6 +184,8 @@ void processos_atualiza_dados_processo(processo_t *self, estado_t estado, cpu_es
   // Atualiza o numero de bloqueios e desbloqueios
   if(estado == BLOQUEADO && (self->estado == PRONTO || self->estado == EXECUCAO)){
     self->numero_bloqueios++;
+  }else if(estado == PRONTO && self->estado == EXECUCAO){
+    self->numero_preempcoes++;
   }
   
   self->estado = estado;
@@ -192,6 +203,8 @@ void processos_atualiza_estado(processo_t *lista, int id, estado_t estado, acess
     // Atualiza o numero de bloqueios
     if(estado == BLOQUEADO && (temp->estado == PRONTO || temp->estado == EXECUCAO)){
       temp->numero_bloqueios++;
+    }else if(estado == PRONTO && temp->estado == EXECUCAO){
+      temp->numero_preempcoes++;
     }
 
     // Atualiza o estado do processo 
@@ -212,6 +225,11 @@ int processos_pega_numero_bloqueios(processo_t *self){
 // Pega o numero de desbloqueios do processo
 int processos_pega_numero_desbloqueios(processo_t *self){
   return self->numero_desbloqueios;
+}
+
+// Pega o numero de preempcoes do processo
+int processos_pega_numero_preempcoes(processo_t *self){
+  return self->numero_preempcoes;
 }
 
 // Pega o tempo de execucão do processo
@@ -239,12 +257,24 @@ float processos_pega_media_tempo_de_retorno(processo_t *self){
   return (self->tempo_em_bloqueio + self->tempo_em_pronto) / self->numero_bloqueios;
 }
 
+// Pega o quantum do processo
+int processos_pega_quantum(processo_t *self){
+  return self->quantum;
+}
+
+// Seta o quantum do processo
+void processos_set_quantum(processo_t *self, int quantum){
+  self->quantum = quantum;
+}
+
 
 // Atualiza o estado de um processo, se for para BLOQUEADO armazena o tipo de bloqueio e o terminal referência
 void processos_atualiza_estado_processo(processo_t *self, estado_t estado, acesso_t tipo_bloqueio, int terminal_bloqueio){
   // Atualiza o numero de bloqueios
   if(estado == BLOQUEADO && (self->estado == PRONTO || self->estado == EXECUCAO)){
     self->numero_bloqueios++;
+  }else if(estado == PRONTO && self->estado == EXECUCAO){
+    self->numero_preempcoes++;
   }
   self->estado = estado; 
   if(estado == BLOQUEADO){

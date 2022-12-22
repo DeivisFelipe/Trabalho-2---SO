@@ -92,6 +92,9 @@ int processos_pega_numero_bloqueios(processo_t *self);
 // Pega o numero de desbloqueios do processo
 int processos_pega_numero_desbloqueios(processo_t *self);
 
+// Pega o numero de preempcoes do processo
+int processos_pega_numero_preempcoes(processo_t *self);
+
 // Pega o tempo de execucão do processo
 int processos_pega_tempo_em_execucao(processo_t *self);
 
@@ -103,6 +106,12 @@ int processos_pega_tempo_em_pronto(processo_t *self);
 
 // Pega a media de tempo de retorno do processo
 float processos_pega_media_tempo_de_retorno(processo_t *self);
+
+// Pega o quantum do processo
+int processos_pega_quantum(processo_t *self);
+
+// Seta o quantum do processo
+void processos_set_quantum(processo_t *self, int quantum);
 
 // Pega o estado do processo
 estado_t processos_pega_estado(processo_t *self);

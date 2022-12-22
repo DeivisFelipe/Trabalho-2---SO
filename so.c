@@ -12,10 +12,11 @@ struct historico_t{
   int tempo_em_execucao;
   int tempo_em_bloqueio;
   int tempo_em_pronto;
+  int tempo_de_retorno;
   float media_tempo_de_retorno;
   int numero_bloqueios;
   int numero_desbloqueios;
-  int tempo_de_retorno;
+  int numero_preempcoes;
   historico_t *proximo;
 };
 
@@ -204,6 +205,7 @@ static void so_trata_sisop_fim(so_t *self)
   historico_t *item_historico = malloc(sizeof(historico_t));
   item_historico->numero_bloqueios = processos_pega_numero_bloqueios(atual);
   item_historico->numero_desbloqueios = processos_pega_numero_desbloqueios(atual);
+  item_historico->numero_preempcoes = processos_pega_numero_preempcoes(atual);
   item_historico->tempo_em_execucao = processos_pega_tempo_em_execucao(atual);
   item_historico->tempo_em_bloqueio = processos_pega_tempo_em_bloqueio(atual);
   item_historico->tempo_em_pronto = processos_pega_tempo_em_pronto(atual);
@@ -636,6 +638,7 @@ void exibe_informacoes_teste(so_t *self){
     t_printf("Média tempo de retorno: %f\n", temp->media_tempo_de_retorno);
     t_printf("Total de bloqueios: %d\n", temp->numero_bloqueios);
     t_printf("Total de desbloqueios: %d\n", temp->numero_desbloqueios);
+    t_printf("Total de preempções: %d\n", temp->numero_preempcoes);
     t_printf("-------------------------------\n");
     temp = temp->proximo;
   }
