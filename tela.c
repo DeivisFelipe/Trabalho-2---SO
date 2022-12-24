@@ -131,9 +131,9 @@ void t_ins(int t, int n)
 void t_limpa_terms()
 {
   for (int t=0; t<N_TERM; t++) {
-    if(!t_livre(t)) {
+    //if(!t_livre(t)) {
       fn_zera(&tela.saida[t]);
-    }
+    //}
   }
 }
 

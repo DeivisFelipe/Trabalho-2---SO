@@ -24,7 +24,7 @@ void processos_destroi(processo_t *lista);
 void processos_desbloqueia(processo_t *lista, es_t *estrada_saida);
 
 // Insere um novo processo no final da fila
-processo_t *processos_insere(processo_t *lista, int id, estado_t estado, int inicio_memoria, int fim_memoria, cpu_estado_t *cpu, int tempo_inicio);
+processo_t *processos_insere(processo_t *lista, int id, estado_t estado, int inicio_memoria, int fim_memoria, cpu_estado_t *cpu, int tempo_inicio, int quantum);
 
 // Funcao que printa todos os processos
 void processos_printa(processo_t *lista);
@@ -46,6 +46,9 @@ void processos_atualiza_dados_processo(processo_t *selt, estado_t estado, cpu_es
 
 // Contabiliza o tempo em bloqueado e pronto
 void processos_contabiliza_estatisticas(processo_t *lista);
+
+// Bota o processo no fim da fila
+void processos_bota_fim(processo_t *lista, processo_t *atual);
 
 // Pega o tempo de retorno do processo
 int processos_pega_tempo_de_retorno(processo_t *self, int tempo_final);

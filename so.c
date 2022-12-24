@@ -7,6 +7,9 @@
 #include <ctype.h>
 #include <unistd.h>
 
+#define QUANTUM 2
+#define TIPO_ESCALONADOR 1
+
 struct historico_t{
   int id;
   int tempo_em_execucao;
@@ -59,6 +62,7 @@ so_t *so_cria(contr_t *contr)
   self->memoria_utilizada = 0;
   init_mem(self); // Executa antes para saber qual o tamanho do programa principal
   self->processos = processos_cria(0, EXECUCAO, contr_mem(self->contr), 0, self->memoria_utilizada, self->cpue, rel_agora(contr_rel(self->contr)));
+  processos_set_quantum(self->processos, QUANTUM);
   self->numero_de_processos = 1;
   self->memoria_pos = 0;
   self->memoria_pos_fim = self->memoria_utilizada;
@@ -413,7 +417,7 @@ static void so_trata_sisop_cria(so_t *self) {
     mem_muda_fim_executando(mem, self->memoria_pos_fim);
 
     //mem_printa(mem);
-    self->processos = processos_insere(self->processos, numeroPrograma, EXECUCAO, self->memoria_utilizada, fim, self->cpue, rel_agora(contr_rel(self->contr)));
+    self->processos = processos_insere(self->processos, numeroPrograma, EXECUCAO, self->memoria_utilizada, fim, self->cpue, rel_agora(contr_rel(self->contr)), QUANTUM);
     
     self->memoria_utilizada += tamanhoMemoria;
     mem_muda_utilizado(mem, self->memoria_utilizada);
@@ -425,6 +429,7 @@ static void so_trata_sisop_cria(so_t *self) {
     t_printf("Processo: %d\n", processos_pega_id(processo));
     // atualisa o estado dele para em EXECUCAO
     processos_atualiza_dados_processo(processo, EXECUCAO, self->cpue);
+    processos_set_quantum(processo, QUANTUM);
     // Posição inicial da memoria
     int inicio = processos_pega_inicio(processo);
     // Posição final da memoria
@@ -500,10 +505,13 @@ static void so_trata_tic(so_t *self)
 
 // Escalonador de processos
 void escalonador(so_t *self){
+
+  processo_t *pronto;
+  if(TIPO_ESCALONADOR == 1){
+    // Pega o primeiro processo que estiver pronto
+    pronto = processos_pega_pronto(self->processos);
+  }
   
-  
-  // Pega o primeiro processo que estiver pronto
-  processo_t *pronto = processos_pega_pronto(self->processos);
 
   // Verifica se encontrou um processo
   if(pronto != NULL){
@@ -530,6 +538,7 @@ void escalonador(so_t *self){
 
   // Atualiza o estado do processo para em EXECUCAO
   processos_atualiza_estado_processo(pronto, EXECUCAO, leitura, 1);
+  processos_set_quantum(pronto, QUANTUM);
 
   // Altera a cpu em execução
   exec_altera_estado(contr_exec(self->contr), self->cpue);
@@ -595,6 +604,14 @@ void so_contabiliza_instrucoes(so_t *self){
     if(processos_pega_id(execucao) != 0){
       self->tempo_executando++;
       processos_add_tempo_execucao(execucao);
+      processos_set_quantum(execucao, processos_pega_quantum(execucao) - 1);
+      if(processos_pega_quantum(execucao) == 0){
+        exec_copia_estado(contr_exec(self->contr), self->cpue);
+        processos_atualiza_dados_processo(execucao, PRONTO, self->cpue);
+        processos_atualiza_estado_processo(execucao, PRONTO, leitura, 1);
+        processos_bota_fim(self->processos, execucao);
+        escalonador(self);
+      }
     }else{
       self->tempo_parado++;
     }
@@ -608,8 +625,8 @@ void so_contabiliza_instrucoes(so_t *self){
 void funcao_teste(so_t * self){
   t_ins(7, 1);
   t_ins(7, 2);
-  t_ins(0, 50);
-  t_ins(1, 40);
+  t_ins(0, 80);
+  t_ins(1, 60);
 }
 
 // Função utilizada para limpar os terminais

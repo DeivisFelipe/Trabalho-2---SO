@@ -54,7 +54,7 @@ processo_t* processos_cria(int id, estado_t estado , mem_t *mem, int inicio_memo
 }
 
 // Função que insere um novo processo a lista de processos
-processo_t *processos_insere(processo_t *lista, int id, estado_t estado, int inicio_memoria, int fim_memoria, cpu_estado_t *cpu, int tempo_inicio){
+processo_t *processos_insere(processo_t *lista, int id, estado_t estado, int inicio_memoria, int fim_memoria, cpu_estado_t *cpu, int tempo_inicio, int quantum){
   processo_t *novo = malloc(sizeof(*novo));
   novo->id = id;
   novo->estado = estado;
@@ -71,7 +71,7 @@ processo_t *processos_insere(processo_t *lista, int id, estado_t estado, int ini
   novo->numero_desbloqueios = 0;
   novo->tempo_inicio = tempo_inicio;
   novo->numero_preempcoes = 0;
-  novo->quantum = 0;
+  novo->quantum = quantum;
 
   cpue_copia(cpu, novo->cpue);
   if(lista->proximo == NULL){
@@ -143,6 +143,20 @@ void processos_desbloqueia(processo_t *lista, es_t *estrada_saida){
     }
     temp = temp->proximo;
   }
+}
+
+// Bota o processo no fim da fila
+void processos_bota_fim(processo_t *lista, processo_t *atual){
+  processo_t *temp = lista;
+  while(temp->proximo != NULL){
+    if(temp->proximo == atual){
+      temp->proximo = atual->proximo;
+      atual->proximo = NULL;
+    }else{
+      temp = temp->proximo;
+    }
+  }
+  temp->proximo = atual;
 }
 
 
@@ -254,11 +268,17 @@ int processos_pega_tempo_de_retorno(processo_t *self, int tempo_final){
 
 // Pega a media de tempo de retorno do processo
 float processos_pega_media_tempo_de_retorno(processo_t *self){
+  if(self->numero_bloqueios == 0){
+    return 0;
+  }
   return (self->tempo_em_bloqueio + self->tempo_em_pronto) / self->numero_bloqueios;
 }
 
 // Pega o quantum do processo
 int processos_pega_quantum(processo_t *self){
+  if(self->id == 0){
+    return 1;
+  }
   return self->quantum;
 }
 
