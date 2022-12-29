@@ -1,0 +1,35 @@
+Testes como os programa printando a quantidade de números:
+Programa 1: 80
+Programa 2: 60
+
+Quantum: 60
+
+-------------------------------
+Escalonador:    Round Robin
+Informações   Sistema Operacional
+Total Execução:       1554
+Tempo em execução:    1429
+Tempo em parado:        125
+Chamadas de sistema:    157
+Chamadas rel:   31
+-------------------------------
+Processo 2
+Tempo de retorno:       1235
+Tempo em execução:     613
+Tempo em bloqueio:      182
+Tempo em pronto:        440
+Média tempo de retorno:124.000000
+Total de bloqueios:     5
+Total de desbloqueios:  5
+Total de preempções:  10
+-------------------------------
+Processo 1
+Tempo de retorno:       1545
+Tempo em execução:     816
+Tempo em bloqueio:      253
+Tempo em pronto:        476
+Média tempo de retorno:91.000000
+Total de bloqueios:     8
+Total de desbloqueios:  8
+Total de preempções:  13
+-------------------------------

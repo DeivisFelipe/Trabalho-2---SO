@@ -7,7 +7,7 @@
 #include <ctype.h>
 #include <unistd.h>
 
-#define QUANTUM 200
+#define QUANTUM 60
 #define TIPO_ESCALONADOR 2
 
 struct historico_t{

@@ -1,0 +1,35 @@
+Testes como os programa printando a quantidade de números:
+Programa 1: 80
+Programa 2: 60
+
+Quantum: 60
+
+-------------------------------
+Escalonador:    Prioridade
+Informações   Sistema Operacional
+Total Execução:       1554
+Tempo em execução:    1431
+Tempo em parado:        123
+Chamadas de sistema:    159
+Chamadas rel:   31
+-------------------------------
+Processo 2
+Tempo de retorno:       1241
+Tempo em execução:     618
+Tempo em bloqueio:      72
+Tempo em pronto:        551
+Média tempo de retorno:623.000000
+Total de bloqueios:     1
+Total de desbloqueios:  1
+Total de preempções:  10
+-------------------------------
+Processo 1
+Tempo de retorno:       1545
+Tempo em execução:     813
+Tempo em bloqueio:      426
+Tempo em pronto:        306
+Média tempo de retorno:52.000000
+Total de bloqueios:     14
+Total de desbloqueios:  14
+Total de preempções:  13
+-------------------------------
