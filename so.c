@@ -7,8 +7,8 @@
 #include <ctype.h>
 #include <unistd.h>
 
-#define QUANTUM 2
-#define TIPO_ESCALONADOR 1
+#define QUANTUM 200
+#define TIPO_ESCALONADOR 2
 
 struct historico_t{
   int id;
@@ -507,11 +507,13 @@ static void so_trata_tic(so_t *self)
 void escalonador(so_t *self){
 
   processo_t *pronto;
-  if(TIPO_ESCALONADOR == 1){
+  if(TIPO_ESCALONADOR == 1 || TIPO_ESCALONADOR == 2){
     // Pega o primeiro processo que estiver pronto
     pronto = processos_pega_pronto(self->processos);
+  }else if(TIPO_ESCALONADOR == 3){
+    // Pega o processo com maior prioridade
+    pronto = processos_pega_menor(self->processos, QUANTUM);
   }
-  
 
   // Verifica se encontrou um processo
   if(pronto != NULL){
@@ -538,7 +540,10 @@ void escalonador(so_t *self){
 
   // Atualiza o estado do processo para em EXECUCAO
   processos_atualiza_estado_processo(pronto, EXECUCAO, leitura, 1);
-  processos_set_quantum(pronto, QUANTUM);
+  if(processos_pega_quantum(pronto) == 0){
+    processos_set_quantum(pronto, QUANTUM);
+  }
+  
 
   // Altera a cpu em execução
   exec_altera_estado(contr_exec(self->contr), self->cpue);
@@ -605,7 +610,8 @@ void so_contabiliza_instrucoes(so_t *self){
       self->tempo_executando++;
       processos_add_tempo_execucao(execucao);
       processos_set_quantum(execucao, processos_pega_quantum(execucao) - 1);
-      if(processos_pega_quantum(execucao) == 0){
+      if(processos_pega_quantum(execucao) == 0 && (TIPO_ESCALONADOR == 2 || TIPO_ESCALONADOR == 3)){
+        t_printf("Processo: %i parou de executar\n", processos_pega_id(execucao));
         exec_copia_estado(contr_exec(self->contr), self->cpue);
         processos_atualiza_dados_processo(execucao, PRONTO, self->cpue);
         processos_atualiza_estado_processo(execucao, PRONTO, leitura, 1);
@@ -637,26 +643,36 @@ void limpa_terminais(so_t *self){
 // Função utilizada para printar as informações do teste
 void exibe_informacoes_teste(so_t *self){
   int total =  rel_agora(contr_rel(self->contr)); // +1 pois o relógio da instrução não foi atualizado ainda
+  for(int i = 0; i < 5; i++){
+    t_printf("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
+  }
   t_printf("-------------------------------\n");
-  t_printf("Informações SO\n");
-  t_printf("Total Execução: %d\n", total);
-  t_printf("Tempo em execução: %d\n", self->tempo_executando);
-  t_printf("Tempo em parado: %d\n", self->tempo_parado);
-  t_printf("Chamadas de sistema: %d\n", self->chamadas_de_sistema);
-  t_printf("Chamadas rel: %d\n", self->chamadas_de_sistema_relogio);
-  t_printf("-------------------------------\n");
+  if(TIPO_ESCALONADOR == 1){
+    t_printf("Escalonador:\tFIFO");
+  }else if(TIPO_ESCALONADOR == 2){
+    t_printf("Escalonador:\tRound Robin");
+  }else if(TIPO_ESCALONADOR == 3){
+    t_printf("Escalonador:\tPrioridade");
+  }
+  t_printf("Informações\tSistema Operacional");
+  t_printf("Total Execução:\t%d", total);
+  t_printf("Tempo em execução:\t%d", self->tempo_executando);
+  t_printf("Tempo em parado:\t%d", self->tempo_parado);
+  t_printf("Chamadas de sistema:\t%d", self->chamadas_de_sistema);
+  t_printf("Chamadas rel:\t%d", self->chamadas_de_sistema_relogio);
+  t_printf("-------------------------------");
   historico_t *temp = self->historico;
   while(temp != NULL){
     t_printf("Processo %d", temp->id);
-    t_printf("Tempo de retorno: %d\n", temp->tempo_de_retorno);
-    t_printf("Tempo em execução: %4d\n", temp->tempo_em_execucao);
-    t_printf("Tempo em bloqueio: %d\n", temp->tempo_em_bloqueio);
-    t_printf("Tempo em pronto: %d\n", temp->tempo_em_pronto);
-    t_printf("Média tempo de retorno: %f\n", temp->media_tempo_de_retorno);
-    t_printf("Total de bloqueios: %d\n", temp->numero_bloqueios);
-    t_printf("Total de desbloqueios: %d\n", temp->numero_desbloqueios);
-    t_printf("Total de preempções: %d\n", temp->numero_preempcoes);
-    t_printf("-------------------------------\n");
+    t_printf("Tempo de retorno:\t%d", temp->tempo_de_retorno);
+    t_printf("Tempo em execução:\t%4d", temp->tempo_em_execucao);
+    t_printf("Tempo em bloqueio:\t%d", temp->tempo_em_bloqueio);
+    t_printf("Tempo em pronto:\t%d", temp->tempo_em_pronto);
+    t_printf("Média tempo de retorno:%f", temp->media_tempo_de_retorno);
+    t_printf("Total de bloqueios:\t%d", temp->numero_bloqueios);
+    t_printf("Total de desbloqueios:\t%d", temp->numero_desbloqueios);
+    t_printf("Total de preempções:\t%d", temp->numero_preempcoes);
+    t_printf("-------------------------------");
     temp = temp->proximo;
   }
 }

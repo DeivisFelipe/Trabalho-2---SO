@@ -342,6 +342,42 @@ processo_t *processos_pega_pronto(processo_t *lista){
   return NULL;
 }
 
+// Pega o processo que for menor sem contar o SO
+processo_t *processos_pega_menor(processo_t *lista, int quantum){
+  processo_t *temp = lista;
+
+  // Variaveis que axiliarão na busca do menor
+  float menor;
+  float menorAuxiliar;
+  processo_t *menor_processo = temp;
+
+  // Percorre a lista
+  while (temp != NULL) {
+    temp = temp->proximo;
+    if(temp != NULL){
+      if(temp->estado == PRONTO){
+        if(temp->numero_bloqueios == 0){
+          menorAuxiliar = quantum;
+        }else{
+          menorAuxiliar = temp->tempo_em_execucao / temp->numero_bloqueios;
+        }
+        if(menor_processo == lista){
+          menor = menorAuxiliar;
+          menor_processo = temp;
+        }else if(menorAuxiliar < menor){
+          menor = menorAuxiliar;
+          menor_processo = temp;
+        }
+      }
+    }
+  }
+  if(menor_processo == lista){
+    return NULL;
+  }
+  return menor_processo;
+}
+
+
 // Pega o processo que estiver em execução
 processo_t *processos_pega_execucao(processo_t *lista){
   processo_t *temp = lista;

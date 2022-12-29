@@ -62,6 +62,9 @@ processo_t *processos_pega_execucao(processo_t *lista);
 // Pega processo que esta pronto
 processo_t *processos_pega_pronto(processo_t *lista);
 
+// Pega o processo que for menor sem contar o SO
+processo_t *processos_pega_menor(processo_t *lista, int quantum);
+
 // Pega o terminal que esta bloqueado
 int processos_pega_terminal_bloqueio(processo_t *self);
 
