@@ -20,6 +20,7 @@ struct processo_t {
     int tempo_em_execucao;
     int tempo_em_bloqueio;
     int tempo_em_pronto;
+    int numero_execucoes;
     int numero_bloqueios;
     int numero_desbloqueios;
     int tempo_inicio;
@@ -44,6 +45,7 @@ processo_t* processos_cria(int id, estado_t estado , mem_t *mem, int inicio_memo
   self->tempo_em_pronto = 0;
   self->numero_bloqueios = 0;
   self->numero_desbloqueios = 0;
+  self->numero_execucoes = 1;
   self->tempo_inicio = tempo_inicio;
   self->numero_preempcoes = 0;
   self->quantum = 0;
@@ -69,6 +71,7 @@ processo_t *processos_insere(processo_t *lista, int id, estado_t estado, int ini
   novo->tempo_em_pronto = 0;
   novo->numero_bloqueios = 0;
   novo->numero_desbloqueios = 0;
+  novo->numero_execucoes = 1;
   novo->tempo_inicio = tempo_inicio;
   novo->numero_preempcoes = 0;
   novo->quantum = quantum;
@@ -124,6 +127,8 @@ void processos_atualiza_dados(processo_t *lista, int id, estado_t estado, cpu_es
       temp->numero_bloqueios++;
     }else if(estado == PRONTO && temp->estado == EXECUCAO){
       temp->numero_preempcoes++;
+    }else if(estado == EXECUCAO && temp->estado == PRONTO){
+      temp->numero_execucoes++;
     }
 
     temp->estado = estado;
@@ -200,6 +205,8 @@ void processos_atualiza_dados_processo(processo_t *self, estado_t estado, cpu_es
     self->numero_bloqueios++;
   }else if(estado == PRONTO && self->estado == EXECUCAO){
     self->numero_preempcoes++;
+  }else if(estado == EXECUCAO && self->estado == PRONTO){
+    self->numero_execucoes++;
   }
   
   self->estado = estado;
@@ -219,6 +226,8 @@ void processos_atualiza_estado(processo_t *lista, int id, estado_t estado, acess
       temp->numero_bloqueios++;
     }else if(estado == PRONTO && temp->estado == EXECUCAO){
       temp->numero_preempcoes++;
+    }else if(estado == EXECUCAO && temp->estado == PRONTO){
+      temp->numero_execucoes++;
     }
 
     // Atualiza o estado do processo 
@@ -295,6 +304,8 @@ void processos_atualiza_estado_processo(processo_t *self, estado_t estado, acess
     self->numero_bloqueios++;
   }else if(estado == PRONTO && self->estado == EXECUCAO){
     self->numero_preempcoes++;
+  }else if(estado == EXECUCAO && self->estado == PRONTO){
+    self->numero_execucoes++;
   }
   self->estado = estado; 
   if(estado == BLOQUEADO){
@@ -356,10 +367,10 @@ processo_t *processos_pega_menor(processo_t *lista, int quantum){
     temp = temp->proximo;
     if(temp != NULL){
       if(temp->estado == PRONTO){
-        if(temp->numero_bloqueios == 0){
+        if(temp->numero_execucoes == 1){
           menorAuxiliar = quantum;
         }else{
-          menorAuxiliar = temp->tempo_em_execucao / temp->numero_bloqueios;
+          menorAuxiliar = temp->tempo_em_execucao / temp->numero_execucoes;
         }
         if(menor_processo == lista){
           menor = menorAuxiliar;
