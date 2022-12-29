@@ -1,6 +1,0 @@
-==223== Memcheck, a memory error detector
-==223== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==223== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
-==223== Command: ./teste
-==223== Parent PID: 10
-==223== 
